@@ -22,6 +22,18 @@ async function fetchHotels() {
   return hotels;
 }
 
-const hotelsService = { fetchHotels, checkIfEnrollmentAndTicketAreValid };
+async function fetchHotelWithRooms(hotelId: number) {
+  const hotelWithRooms = await hotelsRepository.fetchHotelWithRooms(hotelId);
+
+  if (!hotelWithRooms) throw notFoundError();
+
+  return hotelWithRooms;
+}
+
+const hotelsService = {
+  fetchHotels,
+  checkIfEnrollmentAndTicketAreValid,
+  fetchHotelWithRooms,
+};
 
 export default hotelsService;
