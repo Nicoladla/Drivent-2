@@ -1,5 +1,11 @@
 import { prisma } from '@/config';
 
-const hotelsRepository = {};
+async function fetchHotels() {
+  const hotels = await prisma.hotel.findMany();
+
+  return hotels;
+}
+
+const hotelsRepository = { fetchHotels };
 
 export default hotelsRepository;

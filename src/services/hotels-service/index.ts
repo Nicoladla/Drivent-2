@@ -1,5 +1,11 @@
-import hotelsRepository from "@/repositories/hotels-repository";
+import hotelsRepository from '@/repositories/hotels-repository';
 
-const hotelsService = {};
+async function fetchHotels() {
+  const hotels = await hotelsRepository.fetchHotels();
+
+  return hotels;
+}
+
+const hotelsService = {fetchHotels};
 
 export default hotelsService;
