@@ -6,7 +6,6 @@ import { createEnrollmentWithAddress, createTicket, createTicketType, createUser
 import jwt from 'jsonwebtoken';
 import { TicketStatus } from '@prisma/client';
 import { createHotels, createRooms } from '../factories/hotels-factory';
-import { isDate } from 'util';
 
 beforeAll(async () => await init());
 
