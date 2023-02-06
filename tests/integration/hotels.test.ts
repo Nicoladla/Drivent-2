@@ -5,6 +5,8 @@ import httpStatus from 'http-status';
 import { createEnrollmentWithAddress, createTicket, createTicketType, createUser } from '../factories';
 import jwt from 'jsonwebtoken';
 import { TicketStatus } from '@prisma/client';
+import { createHotels } from '../factories/hotels-factory';
+import { isDate } from 'util';
 
 beforeAll(async () => await init());
 
@@ -83,12 +85,35 @@ describe('GET /hotels', () => {
       const token = await generateValidToken(user);
       const enrollment = await createEnrollmentWithAddress(user);
       const ticketType = await createTicketType(false);
-
       await createTicket(enrollment.id, ticketType.id, TicketStatus.PAID);
 
       const result = await server.get('/hotels').set('Authorization', `Bearer ${token}`);
 
       expect(result.status).toBe(httpStatus.PAYMENT_REQUIRED);
+    });
+
+    it('should respond with status 200 and the list of hotels', async () => {
+      const user = await createUser();
+      const token = await generateValidToken(user);
+      const enrollment = await createEnrollmentWithAddress(user);
+      const ticketType = await createTicketType(true);
+      await createTicket(enrollment.id, ticketType.id, TicketStatus.PAID);
+      const hotel = await createHotels();
+
+      const result = await server.get('/hotels').set('Authorization', `Bearer ${token}`);
+
+      expect(result.status).toBe(httpStatus.OK);
+      expect(result.body).toEqual(
+        expect.arrayContaining([
+          expect.objectContaining({
+            id: hotel.id,
+            name: hotel.name,
+            image: hotel.image,
+            createdAt: hotel.createdAt.toISOString(),
+            updatedAt: hotel.updatedAt.toISOString(),
+          }),
+        ]),
+      );
     });
   });
 });
